@@ -5,7 +5,7 @@ from suds.client import Client
 from suds.plugin import *
 
 
-class Zoidberg:
+class PythonABike:
 	client = ''
 	def __init__(self):
 		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_2.wsdl'
