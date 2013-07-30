@@ -19,8 +19,6 @@ The I{xdate} module provides classes for converstion
 between XML dates and python objects.
 """
 
-print "The right deal"
-
 from logging import getLogger
 from suds import *
 from suds.xsd import *
