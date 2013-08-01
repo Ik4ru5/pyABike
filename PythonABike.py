@@ -39,5 +39,5 @@ class PythonABike:
 		if hasattr(self, 'geoPos') == False:
 			raise Exception("Not GeoPos")
 		else:
-			listFreeBikes = getattr(self.client.service, 'CABSERVER.listFreeBikes')(CommonParams = self.commonParams, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
-			return listFreeBikes
+			self.listFreeBikes = getattr(self.client.service, 'CABSERVER.listFreeBikes')(CommonParams = self.commonParams, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
+			return self.listFreeBikes

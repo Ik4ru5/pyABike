@@ -53,8 +53,10 @@ if __name__ == '__main__':
 	for opt, arg in opts:
 		if opt in ('--list', '-l'):
 			try:
-				print PythonABike.listFreeBikes(cab, maxRes, radius)
+				freeBikes = PythonABike.listFreeBikes(cab, maxRes, radius)
+				print freeBikes.Locations[0].Distance
 			except Exception as e:
+				print e
 				print "No Geoposition defined! Use --geo=longitude,latitude"
 				sys.exit(2)
 		elif opt in ('--rent', '-r'):

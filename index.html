@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	  html { height: 100% }
+	  body { height: 100%; margin: 0; padding: 0 }
+	  #map-canvas { height: 100% }
+	</style>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUyCFTizHVqjPSw3yFeTdEHxIDKiME890&sensor=true&libraries=visualization"></script>
+	<script type="text/javascript" src="heatmap.js"></script>
+	<script type="text/javascript">
+		var map, pointarray, heatmap;
+
+	  function initialize() {
+		var mapOptions = {
+		  center: new google.maps.LatLng(49.009726,8.401422),
+		  zoom: 14,
+		  mapTypeId: google.maps.MapTypeId.STATLITE
+		};
+		var map = new google.maps.Map(document.getElementById("map-canvas"),
+			mapOptions);
+			
+		var pointArray = new google.maps.MVCArray(taxiData);
+		var gradient = [
+		    'rgba(0, 255, 255, 0)',
+		    'rgba(0, 255, 255, 1)',
+		    'rgba(0, 191, 255, 1)',
+		    'rgba(0, 127, 255, 1)',
+		    'rgba(0, 63, 255, 1)',
+		    'rgba(0, 0, 255, 1)',
+		    'rgba(0, 0, 223, 1)',
+		    'rgba(0, 0, 191, 1)',
+		    'rgba(0, 0, 159, 1)',
+		    'rgba(0, 0, 127, 1)',
+		    'rgba(63, 0, 91, 1)',
+		    'rgba(127, 0, 63, 1)',
+		    'rgba(191, 0, 31, 1)',
+		    'rgba(255, 0, 0, 1)'
+		  ]
+		  heatmap = new google.maps.visualization.HeatmapLayer({
+		    data: pointArray,
+		    gradient: gradient
+		  });
+
+		
+		  heatmap.setMap(map);
+		
+	  }
+
+	  
+	  google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+  </head>
+  <body>
+  	<button onclick="changeGradient()">Change gradient</button>
+	<div id="map-canvas"/>
+  </body>
+</html>
