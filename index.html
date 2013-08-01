@@ -40,7 +40,8 @@
 		  ]
 		  heatmap = new google.maps.visualization.HeatmapLayer({
 		    data: pointArray,
-		    gradient: gradient
+		    gradient: gradient,
+		    radius: 25
 		  });
 
 		
@@ -53,7 +54,6 @@
 	</script>
   </head>
   <body>
-  	<button onclick="changeGradient()">Change gradient</button>
 	<div id="map-canvas"/>
   </body>
 </html>

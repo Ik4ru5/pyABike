@@ -30,27 +30,30 @@ class myThread (threading.Thread):
 			conn = sqlite3.connect('pythonABike.db')
 			c = conn.cursor()
 			
-			for location in availBikes.Locations:
-				c.execute("SELECT * FROM stations WHERE longitude = :long AND latitude = :lat", {"long":location.Position.Longitude, "lat":location.Position.Latitude})
-				result = c.fetchall()
-				if len(result) == 0:
-					c.execute("INSERT INTO stations (id, description, longitude, latitude, isOutside, dateTime) VALUES (null, :desc, :long, :lat, :out, strftime('%s', 'now'))", {"desc":location.Description, "long":location.Position.Longitude, "lat":location.Position.Latitude, "out":location.isOutside})
-					station = c.lastrowid
-					
-					conn.commit()
-				else:
-					station = result[0][0]
-					
-				print station
-				
-				for bike in location.FreeBikes:
-					c.execute("SELECT * FROM bikes WHERE number = :number AND stationID = :station", {"number":bike.Number, "station":station})
-					result = c.fetchall();
-					
+			if len(availBikes) > 0:
+				for location in availBikes.Locations:
+					c.execute("SELECT * FROM stations WHERE longitude = :long AND latitude = :lat", {"long":location.Position.Longitude, "lat":location.Position.Latitude})
+					result = c.fetchall()
 					if len(result) == 0:
-						c.execute("INSERT INTO bikes (id, number, stationID, canBeRented, canBeReturned, version, dateTime) VALUES (null, :number, :station, :rentable, :returnable, :version, strftime('%s', 'now'))", {"number":bike.Number,"station":station,"rentable":bike.canBeRented,"returnable":bike.canBeReturned,"version":bike.Version,})
+						c.execute("INSERT INTO stations (id, description, longitude, latitude, isOutside, dateTime) VALUES (null, :desc, :long, :lat, :out, strftime('%s', 'now'))", {"desc":location.Description, "long":location.Position.Longitude, "lat":location.Position.Latitude, "out":location.isOutside})
+						station = c.lastrowid
+						
 						conn.commit()
-			c.close()
+						print "new station found with id " + str(station)
+					else:
+						station = result[0][0]
+						
+					
+					
+					for bike in location.FreeBikes:
+						c.execute("SELECT * FROM bikes WHERE number = :number AND stationID = :station", {"number":bike.Number, "station":station})
+						result = c.fetchall();
+						
+						if len(result) == 0:
+							c.execute("INSERT INTO bikes (id, number, stationID, canBeRented, canBeReturned, version, dateTime) VALUES (null, :number, :station, :rentable, :returnable, :version, strftime('%s', 'now'))", {"number":bike.Number,"station":station,"rentable":bike.canBeRented,"returnable":bike.canBeReturned,"version":bike.Version,})
+							conn.commit()
+							print "new bike with id " + str(bike.Number) + " found at station " + str(station)
+				c.close()
 		except Exception as e:
 			print e
 	
