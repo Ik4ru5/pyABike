@@ -42,8 +42,6 @@ class myThread (threading.Thread):
 						print "new station found with id " + str(station)
 					else:
 						station = result[0][0]
-						
-					
 					
 					for bike in location.FreeBikes:
 						c.execute("SELECT * FROM bikes WHERE number = :number AND stationID = :station", {"number":bike.Number, "station":station})

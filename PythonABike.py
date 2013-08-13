@@ -8,7 +8,7 @@ from suds.plugin import *
 class PythonABike:
 	client = ''
 	def __init__(self):
-		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_2.wsdl'
+		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_3.wsdl'
 		self.client = Client(url)
 
 		self.buildCommonParams()
@@ -41,3 +41,66 @@ class PythonABike:
 		else:
 			self.listFreeBikes = getattr(self.client.service, 'CABSERVER.listFreeBikes')(CommonParams = self.commonParams, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
 			return self.listFreeBikes
+			
+	def getCustomerInfo(self, user = '', passwd = ''):
+		#CommonParams: 
+		#CustomerData:
+		if user != '' & passwd != '':
+			self.buildCustomerData(user, passwd)
+		else:	
+			try:
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.getCustomerInfo')(CommonParams = self.commonParams, CustomerData = self.customerData)
+				return self.requestResponse
+			except Execption as e:
+				print e
+	
+	
+	def requestNewPassword(self, phone):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
+		try:
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPassword')(CommonParams = self.commonParams, PhoneNumber = phone)
+			return self.requestResponse
+		except Execption as e:
+			print "blabla"
+	
+	"""
+		
+	
+	def listReturnLocations(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
+		#SearchPosition: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_GeoPosition
+		#maxResults: http://www.w3.org/2001/XMLSchema:int
+		#searchRadius: http://www.w3.org/2001/XMLSchema:int
+		
+	def rentBike(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
+		
+	def returnBike(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
+		#ReturnCode: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeCode
+		#LocationUID: http://www.w3.org/2001/XMLSchema:int
+		#CustomerDataOptional: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerDataOptional
+		
+	def requestNewPassword(self, phone):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
+		print getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, phone)
+		
+	def checkTripStart(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
+				
+	def changePersCode(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#persCode: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeCode
+	
+	def getBikeInfo(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber"""
