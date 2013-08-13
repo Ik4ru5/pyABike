@@ -94,19 +94,35 @@ class PythonABike:
 				print "An Error occurred during the request: "
 				print e
 			
-	"""	
-	def returnBike(self):
+		
+	def returnBike(self, bike, retCode, locID, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
 		#ReturnCode: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeCode
 		#LocationUID: http://www.w3.org/2001/XMLSchema:int
 		#CustomerDataOptional: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerDataOptional
-		
+		if user != '' & passwd != '':
+			self.buildCustomerData(user, passwd)
+		else:
+			try:
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.listReturnLocations')(CommonParams = self.commonParams, BikeNumber = bike, ReturnCode = retCode, LocationUID = locID, CustomerData = self.customerData)
+				return self.requestResponse
+			except Execption as e:
+				print "An Error occurred during the request: "
+				print e
+	
+	
 	def requestNewPassword(self, phone):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
-		print getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, phone)
-		
+		try:
+			self.requestResponse getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, phone)
+			return self.requestResponse
+		except Execption as e:
+			print "An Error occurred during the request: "
+			print e
+	
+	"""	
 	def checkTripStart(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
