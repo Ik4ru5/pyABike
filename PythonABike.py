@@ -8,7 +8,7 @@ from suds.plugin import *
 class PythonABike:
 	client = ''
 	def __init__(self):
-		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_3.wsdl'
+		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_3.wsdl' # current api url
 		self.client = Client(url)
 
 		self.buildCommonParams()
@@ -62,23 +62,39 @@ class PythonABike:
 			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPassword')(CommonParams = self.commonParams, PhoneNumber = phone)
 			return self.requestResponse
 		except Execption as e:
-			print "blabla"
+			print "An Error occurred during the request: "
+			print e
 	
-	"""
-		
-	
-	def listReturnLocations(self):
+
+	def listReturnLocations(self, bike, maxRes = 100, radius = 5000):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
 		#SearchPosition: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_GeoPosition
 		#maxResults: http://www.w3.org/2001/XMLSchema:int
 		#searchRadius: http://www.w3.org/2001/XMLSchema:int
+		try:
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.listReturnLocations')(CommonParams = self.commonParams, BikeNumber = bike, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
+			return self.requestResponse
+		except Execption as e:
+			print "An Error occurred during the request: "
+			print e
 		
-	def rentBike(self):
+		
+	def rentBike(self, bike, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
-		
+		if user != '' & passwd != '':
+			self.buildCustomerData(user, passwd)
+		else:
+			try:
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.listReturnLocations')(CommonParams = self.commonParams, CustomerData = self.customerData, BikeNumber = bike)
+				return self.requestResponse
+			except Execption as e:
+				print "An Error occurred during the request: "
+				print e
+			
+	"""	
 	def returnBike(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
@@ -103,4 +119,27 @@ class PythonABike:
 	
 	def getBikeInfo(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
-		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber"""
+		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
+		
+	def listProductInfo(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+	
+	def addCustomer(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#NewCustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_NewCustomerData
+	
+	def reportDamage(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#DamageData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_DamageData
+	
+	def redeemBonusCode(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#BonusCode: http://www.w3.org/2001/XMLSchema:string
+	
+	def listCompletedTrips(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#TripLimits: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_TripLimits
+	"""
