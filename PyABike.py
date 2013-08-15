@@ -5,7 +5,7 @@ from suds.client import Client
 from suds.plugin import *
 
 
-class PythonABike:
+class PyABike:
 	client = ''
 	def __init__(self):
 		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_3.wsdl' # current api url
@@ -14,7 +14,7 @@ class PythonABike:
 		self.buildCommonParams()
 
 	def buildCustomerData(self, user, passwd):
-		if user != '' & passwd != '':
+		if user != '' and passwd != '':
 			self.customerData = self.client.factory.create('Type_CustomerData')
 			self.customerData.Password = passwd
 			self.customerData.Phone = user
@@ -25,7 +25,7 @@ class PythonABike:
 
 
 	def buildGeoPos(self, longitude, latitude):
-		if longitude != '' & latitude != '':
+		if longitude != 0.0 and latitude != 0.0:
 			self.geoPos = self.client.factory.create('Type_GeoPosition');
 			self.geoPos.Longitude = longitude
 			self.geoPos.Latitude = latitude
@@ -49,8 +49,8 @@ class PythonABike:
 
 
 
-	def listFreeBikes(self, longitude = '', latitude = '', maxRes = 100, radius = 5000):
-		if buildGeoPos(self, longitude, latitude):
+	def listFreeBikes(self, longitude = 0.0, latitude = 0.0, maxRes = 100, radius = 5000):
+		if self.buildGeoPos(longitude, latitude):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.listFreeBikes')(CommonParams = self.commonParams, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
 				return self.requestResponse
@@ -60,7 +60,7 @@ class PythonABike:
 		else:
 			raise Exception('There is no place like ::1') # no valid ongitude and latitude supplied
 
-"""
+
 
 	def getCustomerInfo(self, user = '', passwd = ''):
 		#CommonParams: 
@@ -125,7 +125,7 @@ class PythonABike:
 		#ReturnCode: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeCode
 		#LocationUID: http://www.w3.org/2001/XMLSchema:int
 		#CustomerDataOptional: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerDataOptional
-		if user == '' & passwd == '':	
+		if user == '' and passwd == '':	
 			self.customerData = ''		
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.returnBike')(CommonParams = self.commonParams, BikeNumber = bike, ReturnCode = retCode, LocationUID = locID, CustomerDataOptional = '')
@@ -149,7 +149,7 @@ class PythonABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
 		try:
-			self.requestResponse getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, phone)
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, PhoneNumber = phone)
 			return self.requestResponse
 		except Execption as e:
 			print "An Error occurred during the request: "
@@ -159,7 +159,7 @@ class PythonABike:
 	def listProductInfo(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		try:
-			self.requestResponse getattr(self.client.service, 'CABSERVER.listProductInfo')(CommonParams = self.commonParams)
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.listProductInfo')(CommonParams = self.commonParams)
 			return self.requestResponse
 		except Execption as e:
 			print "An Error occurred during the request: "
@@ -169,11 +169,11 @@ class PythonABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
-		if user != '' & passwd != '':
+		if user != '' and passwd != '':
 			self.buildCustomerData(user, passwd)
 		else:
 			try:
-				self.requestResponse getattr(self.client.service, 'CABSERVER.checkTripStart')(CommonParams = self.commonParams, CustomerData = self.customerData, BikeNumber = bike)
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.checkTripStart')(CommonParams = self.commonParams, CustomerData = self.customerData, BikeNumber = bike)
 				return self.requestResponse
 			except Execption as e:
 				print "An Error occurred during the request: "
@@ -184,17 +184,17 @@ class PythonABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#persCode: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeCode
-		if user != '' & passwd != '':
+		if user != '' and passwd != '':
 			self.buildCustomerData(user, passwd)
 		else:
 			try:
-				self.requestResponse getattr(self.client.service, 'CABSERVER.changePersCode')(CommonParams = self.commonParams, CustomerData = self.customerData, persCode = code)
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.changePersCode')(CommonParams = self.commonParams, CustomerData = self.customerData, persCode = code)
 				return self.requestResponse
 			except Execption as e:
 				print "An Error occurred during the request: "
 				print e
 	
-	
+	"""
 	def getBikeInfo(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
