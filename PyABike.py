@@ -13,6 +13,7 @@ class PyABike:
 
 		self.buildCommonParams()
 
+
 	def buildCustomerData(self, user, passwd):
 		if user != '' and passwd != '':
 			self.customerData = self.client.factory.create('Type_CustomerData')
@@ -49,12 +50,61 @@ class PyABike:
 	
 
 
-	#def buildNewCustomerData(self):
-	
-	
+	#requires self.payment
+	def buildNewCustomerData(self, productID, name, surname, sex, birthday, street, number, town, zip, countryCode, email, phone):
+		if hasattr(self, 'payment'):
+			self.newCustomerData = self.client.factory.create('NewCustomerData')
+				if sex == 'm' or sex == 'w':
+					self.newCustomerData.Sex 	= sex
+				else:
+					raise Exception('Invalid Sex')
+			self.newCustomerData.Forename		= name
+			self.newCustomerData.Surname		= surname
+			self.newCustomerData.Birthday		= birthday
+			self.newCustomerData.Street			= street
+			self.newCustomerData.Streetnumber	= number
+			self.newCustomerData.Town			= town
+			self.newCustomerData.Zipcode		= zip
+			self.newCustomerData.CountryCode 	= countryCode
+			self.newCustomerData.Email			= email
+			self.newCustomerData.Phonenumber	= phone
+			self.newCustomerData.Payment		= self.payment
+			if hasattr(self, 'bonusCard'):
+				self.newCustomerData.BonusCard	= self.bonusCard
+			self.newCustomerData.ProductID		= productID
+		else
+			raise Exception('Missing payment data requirements')
+
+
+	#iban and bic or bankcode and accountNumber are required
+	def buildPaymentByWire(self, iban = 0, bic = 0, bankcode = 0, accountNumber = 0):
+		self.payment = self.client.factory.create('Type_Payment')
+		self.payment.PaymentMethod = 'L'
+		
+		self.wire = self.client.factory.create('Type_BankAccount')
+		self.wire.IBAN			= iban
+		self.wire.BIC			= bic
+		self.wire.Bankcode		= bankcode
+		self.wire.AccountNumber	= accountNumber
+
+
+	def buildPaymentByCreditCard(self, cardNumber, expirationDate):
+		self.payment = self.client.factory.create('Type_Payment')
+		self.payment.PaymentMethod = 'K'
+		
+		self.creditCard = self.client.factory.create('Type_Creditcard')
+		self.creditCard.CardNumber 		= cardNumber
+		self.creditCard.ExpirationDate 	= expirationDate
+		
+		self.payment.CreditCard = self.creditCard
+
+
+	#def buildBounusCard(self):
+
+
 	#def buildTripLimits(self):
-	
-	
+
+
 	#def buildDamageData(self):
 
 
