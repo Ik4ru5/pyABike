@@ -53,20 +53,20 @@ class PyABike:
 
 
 	#requires self.payment
-	def buildNewCustomerData(self, productID, name, surname, sex, birthday, street, number, town, zip, countryCode, email, phone):
+	def buildNewCustomerData(self, productID, name, surname, sex, birthday, street, number, town, zipCode, countryCode, email, phone):
 		if hasattr(self, 'payment'):
 			self.newCustomerData = self.client.factory.create('Type_NewCustomerData')
-				if sex == 'm' or sex == 'w':
-					self.newCustomerData.Sex 	= sex
-				else:
-					raise Exception('Invalid Sex')
+			if sex == 'm' or sex == 'w':
+				self.newCustomerData.Sex 	= sex
+			else:
+				raise Exception('Invalid Sex')
 			self.newCustomerData.Forename		= name
 			self.newCustomerData.Surname		= surname
 			self.newCustomerData.Birthday		= birthday
 			self.newCustomerData.Street			= street
 			self.newCustomerData.Streetnumber	= number
 			self.newCustomerData.Town			= town
-			self.newCustomerData.Zipcode		= zip
+			self.newCustomerData.Zipcode		= zipCode
 			self.newCustomerData.CountryCode 	= countryCode
 			self.newCustomerData.Email			= email
 			self.newCustomerData.Phonenumber	= phone
@@ -74,7 +74,7 @@ class PyABike:
 			if hasattr(self, 'bonusCard'):
 				self.newCustomerData.BonusCard	= self.bonusCard
 			self.newCustomerData.ProductID		= productID
-		else
+		else:
 			raise Exception('Missing payment data requirements')
 
 
@@ -329,7 +329,7 @@ class PyABike:
 			raise Exception('No damage to report')
 
 
-	def listCompletedTrips(self, user = '', passwd = ''):
+	#def listCompletedTrips(self, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#TripLimits: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_TripLimits

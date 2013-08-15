@@ -18,5 +18,5 @@ Usage
 	from PyABike import *
 	
 	cab = PyABike()
-	freeBikes = PyABike.listFreeBikes(cab, longitude, latitude, 100, 1000)
+	freeBikes = PyABike.listFreeBikes(cab, 100, 1000, longitude, latitude)
 	
