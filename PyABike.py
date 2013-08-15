@@ -46,10 +46,19 @@ class PyABike:
 		self.commonParams.LanguageUID = 1 #only option
 		self.commonParams.RequestTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 		self.commonParams.Version = 1 #only option		
+	
 
 
+	#def buildNewCustomerData(self):
+	
+	
+	#def buildTripLimits(self):
+	
+	
+	#def buildDamageData(self):
 
-	def listFreeBikes(self, longitude = 0.0, latitude = 0.0, maxRes = 100, radius = 5000):
+
+	def listFreeBikes(self, maxRes = 100, radius = 5000, longitude = 0.0, latitude = 0.0):
 		if self.buildGeoPos(longitude, latitude):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.listFreeBikes')(CommonParams = self.commonParams, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
@@ -86,7 +95,7 @@ class PyABike:
 			print e
 
 
-	def listReturnLocations(self, bike, longitude = '', latitude = '', maxRes = 100, radius = 5000):
+	def listReturnLocations(self, bike, maxRes = 100, radius = 5000, longitude = 0.0, latitude = 0.0):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
 		#SearchPosition: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_GeoPosition
@@ -126,25 +135,18 @@ class PyABike:
 		#LocationUID: http://www.w3.org/2001/XMLSchema:int
 		#CustomerDataOptional: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerDataOptional
 		if user == '' and passwd == '':	
-			self.customerData = ''		
-			try:
-				self.requestResponse = getattr(self.client.service, 'CABSERVER.returnBike')(CommonParams = self.commonParams, BikeNumber = bike, ReturnCode = retCode, LocationUID = locID, CustomerDataOptional = '')
-				return self.requestResponse
-			except Execption as e:
-				print "An Error occurred during the request: "
-				print e
+			self.customerData = ''
 		else:
-			if self.buildCustomerData(user, passwd):
-				try:
-					self.requestResponse = getattr(self.client.service, 'CABSERVER.returnBike')(CommonParams = self.commonParams, BikeNumber = bike, ReturnCode = retCode, LocationUID = locID, CustomerDataOptional = self.customerData)
-					return self.requestResponse
-				except Execption as e:
-					print "An Error occurred during the request: "
-					print e
-			else:
-				raise Exception("No valid username and password supplied for function returnBike")
-	
-	
+			self.buildCustomerData(user, passwd)
+
+		try:
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.returnBike')(CommonParams = self.commonParams, BikeNumber = bike, ReturnCode = retCode, LocationUID = locID, CustomerDataOptional = self.customerData)
+			return self.requestResponse
+		except Execption as e:
+			print "An Error occurred during the request: "
+			print e
+
+
 	def requestNewPassword(self, phone):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
@@ -154,8 +156,8 @@ class PyABike:
 		except Execption as e:
 			print "An Error occurred during the request: "
 			print e
-	
-	
+
+
 	def listProductInfo(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		try:
@@ -164,57 +166,78 @@ class PyABike:
 		except Execption as e:
 			print "An Error occurred during the request: "
 			print e
-			
+
+
 	def checkTripStart(self, bike, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
-		if user != '' and passwd != '':
-			self.buildCustomerData(user, passwd)
-		else:
+		if self.buildCustomerData(user, passwd):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.checkTripStart')(CommonParams = self.commonParams, CustomerData = self.customerData, BikeNumber = bike)
 				return self.requestResponse
 			except Execption as e:
 				print "An Error occurred during the request: "
 				print e
-			
-			
+		else:
+			raise Exception('No username and password supplied for function checkTripStart')
+
+
 	def changePersCode(self, code, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#persCode: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeCode
-		if user != '' and passwd != '':
-			self.buildCustomerData(user, passwd)
-		else:
+		if self.buildCustomerData(user, passwd):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.changePersCode')(CommonParams = self.commonParams, CustomerData = self.customerData, persCode = code)
 				return self.requestResponse
 			except Execption as e:
 				print "An Error occurred during the request: "
 				print e
-	
-	"""
-	def getBikeInfo(self):
+		else:
+			raise Exception('No username and password supplied for function changePersCode')
+
+
+	def getBikeInfo(self, bike):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
-		
-	def addCustomer(self):
-		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
-		#NewCustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_NewCustomerData
-	
-	def reportDamage(self):
-		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
-		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
-		#DamageData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_DamageData
-	
-	def redeemBonusCode(self):
+		try:
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, BikeNummer = bike)
+			return self.requestResponse
+		except Execption as e:
+			print "An Error occurred during the request: "
+			print e
+
+
+	def redeemBonusCode(self, bonusCode, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#BonusCode: http://www.w3.org/2001/XMLSchema:string
-	
-	def listCompletedTrips(self):
+		if self.buildCustomerData(user, passwd):
+			try:
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.changePersCode')(CommonParams = self.commonParams, CustomerData = self.customerData, BonusCode = bonusCode)
+				return self.requestResponse
+			except Execption as e:
+				print "An Error occurred during the request: "
+				print e
+		else:
+			raise Exception('No username and password supplied for function redeemBonusCode')
+
+
+	def addCustomer(self):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#NewCustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_NewCustomerData
+
+
+
+	def reportDamage(self, damageText = '', bike = 0, locID = 0, user = '', passwd = ''):
+		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
+		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
+		#DamageData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_DamageData
+
+
+
+	def listCompletedTrips(self, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#TripLimits: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_TripLimits
-	"""
