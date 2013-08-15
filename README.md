@@ -12,7 +12,7 @@ Requirements
 
 
 
-Usage
+Basic usage
 -------
 
 	from PyABike import *
