@@ -21,6 +21,8 @@ class PyABike:
 			self.customerData.Phone = user
 			
 			return True
+		elif hasattr(self, 'customerData'):
+			return True
 		else:
 			return False
 
@@ -53,7 +55,7 @@ class PyABike:
 	#requires self.payment
 	def buildNewCustomerData(self, productID, name, surname, sex, birthday, street, number, town, zip, countryCode, email, phone):
 		if hasattr(self, 'payment'):
-			self.newCustomerData = self.client.factory.create('NewCustomerData')
+			self.newCustomerData = self.client.factory.create('Type_NewCustomerData')
 				if sex == 'm' or sex == 'w':
 					self.newCustomerData.Sex 	= sex
 				else:
@@ -77,6 +79,7 @@ class PyABike:
 
 
 	#iban and bic or bankcode and accountNumber are required
+	#maybe split up into two functions
 	def buildPaymentByWire(self, iban = 0, bic = 0, bankcode = 0, accountNumber = 0):
 		self.payment = self.client.factory.create('Type_Payment')
 		self.payment.PaymentMethod = 'L'
@@ -105,7 +108,26 @@ class PyABike:
 	#def buildTripLimits(self):
 
 
-	#def buildDamageData(self):
+	def buildDamageData(self, text, bike = 0, locID = 0):
+		if hasattr(self, 'damageData') == False and text != '':
+			if locID == 0 and bike != 0:
+				self.damageData = self.client.factory.create('Type_DamageData')
+				self.damageData.Text		= text
+				self.damageData.BikeNumber	= bike
+				
+				return True
+			elif bike == 0 and locID != 0:
+				self.damageData = self.client.factory.create('Type_DamageData')
+				self.damageData.Text		= text
+				self.damageData.LocationUID	= locID
+				
+				return True
+			else:
+				raise Exception('BikeNumber oder LocationUID must be set')
+		else:
+			raise Exception('No damage description was given')
+		
+		return False
 
 
 	def listFreeBikes(self, maxRes = 100, radius = 5000, longitude = 0.0, latitude = 0.0):
@@ -277,6 +299,15 @@ class PyABike:
 	def addCustomer(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#NewCustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_NewCustomerData
+		if hasattr(self, 'newCustomerData'):
+			try:
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.addCustomer')(CommonParams = self.commonParams, NewCustomerData = self.newCustomerData)
+				return self.requestResponse
+			except Execption as e:
+				print "An Error occurred during the request: "
+				print e
+		else:
+			raise Exception('No Customer specified')
 
 
 
@@ -284,7 +315,18 @@ class PyABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#DamageData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_DamageData
-
+		if self.buildDamageData(damageText, bike, locID):
+			if self.self.buildCustomerData(user, passwd):
+				try:
+					self.requestResponse = getattr(self.client.service, 'CABSERVER.reportDamage')(CommonParams = self.commonParams, CustomerData = self.customerData, DamageData = self.damageData)
+					return self.requestResponse
+				except Execption as e:
+					print "An Error occurred during the request: "
+					print e
+			else:
+				raise Exception('No customerData supplied')
+		else:
+			raise Exception('No damage to report')
 
 
 	def listCompletedTrips(self, user = '', passwd = ''):
