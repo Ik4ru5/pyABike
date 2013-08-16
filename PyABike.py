@@ -34,6 +34,8 @@ class PyABike:
 			self.geoPos.Latitude = latitude
 			
 			return True
+		elif hasattr(self, 'geoPos'):
+			return True
 		else:
 			return False
 
@@ -105,7 +107,12 @@ class PyABike:
 	#def buildBounusCard(self):
 
 
-	#def buildTripLimits(self):
+	def buildTripLimits(self, firstEntry = 0, entryCount = 20, startTime = '', endTime = ''):
+		self.tripLimits = self.client.factory.create('Type_TripLimits')
+		self.tripLimits.FirstEntry = firstEntry
+		self.tripLimits.EntryCount = entryCount
+		self.tripLimits.StartTime = startTime
+		self.tripLimits.EndTime = endTime
 
 
 	def buildDamageData(self, text, bike = 0, locID = 0):
@@ -143,6 +150,7 @@ class PyABike:
 
 
 
+	#auth required
 	def getCustomerInfo(self, user = '', passwd = ''):
 		#CommonParams: 
 		#CustomerData:
@@ -150,19 +158,20 @@ class PyABike:
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.getCustomerInfo')(CommonParams = self.commonParams, CustomerData = self.customerData)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print e
 		else:
 			raise Exception('No username and password supplied for function getCustomerInfo')
 
 
+	#auth required
 	def requestNewPassword(self, phone):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
 		try:
 			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPassword')(CommonParams = self.commonParams, PhoneNumber = phone)
 			return self.requestResponse
-		except Execption as e:
+		except Exception as e:
 			print "An Error occurred during the request: "
 			print e
 
@@ -173,18 +182,20 @@ class PyABike:
 		#SearchPosition: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_GeoPosition
 		#maxResults: http://www.w3.org/2001/XMLSchema:int
 		#searchRadius: http://www.w3.org/2001/XMLSchema:int
-		if buildGeoPos(self, longitude, latitude):
+		print longitude, latitude
+		if self.buildGeoPos(longitude, latitude):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.listReturnLocations')(CommonParams = self.commonParams, BikeNumber = bike, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print "An Error occurred during the request: "
 				print e
 		else:
-			raise Exception('There is no place like ::1') # no valid ongitude and latitude supplied
+			raise Exception('There is no place like ::1') # no valid longitude and latitude supplied
 
 
 
+	#auth required
 	def rentBike(self, bike, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
@@ -193,7 +204,7 @@ class PyABike:
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.rentBike')(CommonParams = self.commonParams, CustomerData = self.customerData, BikeNumber = bike)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print "An Error occurred during the request: "
 				print e
 		else:
@@ -214,7 +225,7 @@ class PyABike:
 		try:
 			self.requestResponse = getattr(self.client.service, 'CABSERVER.returnBike')(CommonParams = self.commonParams, BikeNumber = bike, ReturnCode = retCode, LocationUID = locID, CustomerDataOptional = self.customerData)
 			return self.requestResponse
-		except Execption as e:
+		except Exception as e:
 			print "An Error occurred during the request: "
 			print e
 
@@ -223,23 +234,25 @@ class PyABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
 		try:
-			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, PhoneNumber = phone)
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPassword')(CommonParams = self.commonParams, PhoneNumber = phone)
 			return self.requestResponse
-		except Execption as e:
+		except Exception as e:
 			print "An Error occurred during the request: "
 			print e
 
 
+	#raises ValuesError
 	def listProductInfo(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		try:
 			self.requestResponse = getattr(self.client.service, 'CABSERVER.listProductInfo')(CommonParams = self.commonParams)
 			return self.requestResponse
-		except Execption as e:
+		except Exception as e:
 			print "An Error occurred during the request: "
 			print e
 
 
+	#auth required
 	def checkTripStart(self, bike, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
@@ -248,13 +261,14 @@ class PyABike:
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.checkTripStart')(CommonParams = self.commonParams, CustomerData = self.customerData, BikeNumber = bike)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print "An Error occurred during the request: "
 				print e
 		else:
 			raise Exception('No username and password supplied for function checkTripStart')
 
 
+	#auth required
 	def changePersCode(self, code, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
@@ -263,7 +277,7 @@ class PyABike:
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.changePersCode')(CommonParams = self.commonParams, CustomerData = self.customerData, persCode = code)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print "An Error occurred during the request: "
 				print e
 		else:
@@ -274,13 +288,14 @@ class PyABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
 		try:
-			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPasswords')(CommonParams = self.commonParams, BikeNummer = bike)
+			self.requestResponse = getattr(self.client.service, 'CABSERVER.getBikeInfo')(CommonParams = self.commonParams, BikeNumber = bike)
 			return self.requestResponse
-		except Execption as e:
+		except Exception as e:
 			print "An Error occurred during the request: "
 			print e
 
 
+	#auth required
 	def redeemBonusCode(self, bonusCode, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
@@ -289,7 +304,7 @@ class PyABike:
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.changePersCode')(CommonParams = self.commonParams, CustomerData = self.customerData, BonusCode = bonusCode)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print "An Error occurred during the request: "
 				print e
 		else:
@@ -303,7 +318,7 @@ class PyABike:
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.addCustomer')(CommonParams = self.commonParams, NewCustomerData = self.newCustomerData)
 				return self.requestResponse
-			except Execption as e:
+			except Exception as e:
 				print "An Error occurred during the request: "
 				print e
 		else:
@@ -311,6 +326,7 @@ class PyABike:
 
 
 
+	#auth required
 	def reportDamage(self, damageText = '', bike = 0, locID = 0, user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
@@ -320,7 +336,7 @@ class PyABike:
 				try:
 					self.requestResponse = getattr(self.client.service, 'CABSERVER.reportDamage')(CommonParams = self.commonParams, CustomerData = self.customerData, DamageData = self.damageData)
 					return self.requestResponse
-				except Execption as e:
+				except Exception as e:
 					print "An Error occurred during the request: "
 					print e
 			else:
@@ -329,7 +345,19 @@ class PyABike:
 			raise Exception('No damage to report')
 
 
-	#def listCompletedTrips(self, user = '', passwd = ''):
+	#auth required
+	def listCompletedTrips(self, firstEntry = 0, entryCount = 20, startTime = '', endTime = '', user = '', passwd = ''):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#TripLimits: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_TripLimits
+		self.buildTripLimits()
+		
+		if self.self.buildCustomerData(user, passwd):
+			try:
+				self.requestResponse = getattr(self.client.service, 'CABSERVER.listCompletedTrips')(CommonParams = self.commonParams, CustomerData = self.customerData, TripLimits = self.tripLimits)
+				return self.requestResponse
+			except Exception as e:
+				print "An Error occurred during the request: "
+				print e
+		else:
+			raise Exception('No customerData supplied')
