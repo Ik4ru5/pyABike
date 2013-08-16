@@ -164,25 +164,12 @@ class PyABike:
 			raise Exception('No username and password supplied for function getCustomerInfo')
 
 
-	#auth required
-	def requestNewPassword(self, phone):
-		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
-		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
-		try:
-			self.requestResponse = getattr(self.client.service, 'CABSERVER.requestNewPassword')(CommonParams = self.commonParams, PhoneNumber = phone)
-			return self.requestResponse
-		except Exception as e:
-			print "An Error occurred during the request: "
-			print e
-
-
 	def listReturnLocations(self, bike, maxRes = 100, radius = 5000, longitude = 0.0, latitude = 0.0):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#BikeNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_BikeNumber
 		#SearchPosition: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_GeoPosition
 		#maxResults: http://www.w3.org/2001/XMLSchema:int
 		#searchRadius: http://www.w3.org/2001/XMLSchema:int
-		print longitude, latitude
 		if self.buildGeoPos(longitude, latitude):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.listReturnLocations')(CommonParams = self.commonParams, BikeNumber = bike, SearchPosition = self.geoPos, maxResults = maxRes, searchRadius = radius)
@@ -231,6 +218,8 @@ class PyABike:
 
 
 	def requestNewPassword(self, phone):
+		#really slow send SMS with text: "Ihre Call a Bike Kundennummer lautet: <CustomerID>.Ihr Passwort lautet: <Password [a-zA-Z0-9\+]{8}>" fro the number +49 173 7290391
+		#Password may contain more special chars
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#PhoneNumber: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerPhone
 		try:
@@ -241,7 +230,6 @@ class PyABike:
 			print e
 
 
-	#raises ValuesError
 	def listProductInfo(self):
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		try:
@@ -350,9 +338,9 @@ class PyABike:
 		#CommonParams: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CommonParams
 		#CustomerData: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_CustomerData
 		#TripLimits: https://xml.dbcarsharing-buchung.de/hal2_cabserver/:Type_TripLimits
-		self.buildTripLimits()
+		self.buildTripLimits(firstEntry, entryCount, startTime, endTime)
 		
-		if self.self.buildCustomerData(user, passwd):
+		if self.buildCustomerData(user, passwd):
 			try:
 				self.requestResponse = getattr(self.client.service, 'CABSERVER.listCompletedTrips')(CommonParams = self.commonParams, CustomerData = self.customerData, TripLimits = self.tripLimits)
 				return self.requestResponse

@@ -7,7 +7,7 @@ Python library for Call A Bike
 Requirements
 --------------
 
-* suds (https://fedorahosted.org/suds/)
+* suds (two files modified)
 * Python (tested with 2.7.2)
 
 
