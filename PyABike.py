@@ -104,7 +104,13 @@ class PyABike:
 		self.payment.CreditCard = self.creditCard
 
 
-	#def buildBounusCard(self):
+	def buildBounusCard(self), cardID, cardNumber, validDate, validDateFrom:
+		self.bonusCard = self.client.factory.create('Type_BounusCard')
+		
+		self.bonusCard.CardID = cardID
+		self.bonusCard.CardNumber = cardNumber
+		self.bonusCard.ValidDate = validDate
+		self.bonusCard.ValidDateFrom = validDateFrom
 
 
 	def buildTripLimits(self, firstEntry = 0, entryCount = 20, startTime = '', endTime = ''):

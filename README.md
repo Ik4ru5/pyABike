@@ -1,7 +1,7 @@
 PyABike
 ===========
 
-Python library for Call A Bike 
+Python library for Call A Bike
 
 
 Requirements
@@ -13,10 +13,9 @@ Requirements
 
 
 Basic usage
--------
+--------------
 
 	from PyABike import *
 	
 	cab = PyABike()
 	freeBikes = PyABike.listFreeBikes(cab, 100, 1000, longitude, latitude)
-	
