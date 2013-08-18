@@ -104,7 +104,7 @@ class PyABike:
 		self.payment.CreditCard = self.creditCard
 
 
-	def buildBounusCard(self), cardID, cardNumber, validDate, validDateFrom:
+	def buildBounusCard(self, cardID, cardNumber, validDate, validDateFrom):
 		self.bonusCard = self.client.factory.create('Type_BounusCard')
 		
 		self.bonusCard.CardID = cardID
