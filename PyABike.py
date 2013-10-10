@@ -1,5 +1,7 @@
 import datetime
 import sys, getopt
+import socks
+import urllib2
 from suds import WebFault
 from suds.client import Client
 from suds.plugin import *
@@ -7,7 +9,12 @@ from suds.plugin import *
 
 class PyABike:
 	client = ''
-	def __init__(self):
+	def __init__(self, sockAddress = ''):
+		if(sockAddress != '')
+			old = urllib2.socket.socket
+			socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 1080)
+			socks.wrapmodule(urllib2)# Suds use urllib2
+		
 		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_3.wsdl' # current api url
 		self.client = Client(url)
 
