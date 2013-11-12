@@ -12,11 +12,11 @@ class PyABike:
 	def __init__(self, sockAddress = '', sockPort = 0):
 		if sockAddress != '' and sockPort != 0:
 			old = urllib2.socket.socket
-			socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", sockPort)
+			socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, sockAddress, sockPort)
 			socks.wrapmodule(urllib2)# Suds use urllib2
 		
 		url = 'https://xml.dbcarsharing-buchung.de/hal2_cabserver/definitions/HAL2_CABSERVER_3.wsdl' # current api url
-		self.client = Client(url)
+		self.client = Client(url, faults=False)
 
 		self.buildCommonParams()
 
